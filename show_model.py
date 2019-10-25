@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 from keras.utils.vis_utils import plot_model
 
 # model = load_model('./ft_0925_weights.0291-0.7957.h5')
-model = InceptionResNetV2(weights='imagenet', include_top=True)
-# model = InceptionV3(weights='imagenet', include_top=True)
+# model = InceptionResNetV2(weights='imagenet', include_top=True)
+model = InceptionV3(weights='imagenet', include_top=True)
 
 # 添加全局平均池化层
 # x = model.output
@@ -35,7 +35,7 @@ model = InceptionResNetV2(weights='imagenet', include_top=True)
 # # # 单GPU版本
 # model = Model(inputs=model.input, outputs=predictions)
 
-print(model)
+# print(model)
 
 
 # for layer in model.layers[:4]:
@@ -43,7 +43,7 @@ print(model)
 # for layer in model.layers[4:]:
 #    layer.trainable = True
 
-# plot_model(base_model, 'InceptionV3.png')
+plot_model(model, 'InceptionV3.png')
 for i, layer in enumerate(model.layers):
     print(i, layer.name)
     print(i, layer.trainable)

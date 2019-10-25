@@ -41,11 +41,11 @@ train_datagen = ImageDataGenerator(
     # ZCA 白化的 epsilon 值
     zca_epsilon=1e-06,
     preprocessing_function=preprocess_input,
-    rotation_range = 90, #随即旋转图像15度
-    width_shift_range = 0.1, #随即改变宽度，设置为6表示-3～+3，下一项相同
+    rotation_range = 90, #随机旋转图像15度
+    width_shift_range = 0.1, #随机改变宽度，设置为6表示-3～+3，下一项相同
     height_shift_range = 0.1,
     # shear_range = 0.2, #剪切强度，逆时针方向剪切
-    zoom_range = 0.2, #随即缩放范围，正负20%
+    zoom_range = 0.2, #随机缩放范围，正负20%
     horizontal_flip = False, #随机垂直翻转
     vertical_flip = False #因内窥镜成像图始终保持在右侧，左侧为黑底文字，故此处不做水平翻转
     )
@@ -56,11 +56,11 @@ val_datagen = ImageDataGenerator(
     # ZCA 白化的 epsilon 值
     zca_epsilon=1e-06,
     preprocessing_function=preprocess_input,
-    rotation_range = 90, #随即旋转图像15度
-    width_shift_range = 0.1, #随即改变宽度，设置为6表示-3～+3，下一项相同
+    rotation_range = 90, #随机旋转图像15度
+    width_shift_range = 0.1, #随机改变宽度，设置为6表示-3～+3，下一项相同
     height_shift_range = 0.1,
     # shear_range = 0.2, #剪切强度，逆时针方向剪切
-    zoom_range = 0.2, #随机随即缩放范围，正负20%
+    zoom_range = 0.2, #随机随机缩放范围，正负20%
     horizontal_flip = False, #随机垂直翻转
     vertical_flip = False #因内窥镜成像图始终保持在右侧，左侧为黑底文字，故此处不做水平翻转
     )
@@ -293,7 +293,7 @@ model.save('./model/keras_iv3_ft.h5')
 
 #   plt.show()
 
-# def plot_training_ft(transfer_learning_train):
+# def plot_training_ft(finetune_train):
 #   acc = finetune_train.history['acc']
 #   val_acc = finetune_train.history['val_acc']
 #   loss = finetune_train.history['loss']
@@ -311,4 +311,5 @@ model.save('./model/keras_iv3_ft.h5')
 
 #   plt.show()
 
-# plot_training_tl()
+# plot_training_tl(transfer_learning_train)
+# plot_training_ft(finetune_train)
