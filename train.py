@@ -35,9 +35,10 @@ GPU_numbers = 2
 train_mode = "multi" 
 
 # switch the keras official Applications
-# network_mode = "InceptionResNetV2"
-network_name = "InceptionV3"
-
+network_name = "InceptionResNetV2"
+# network_name = "InceptionV3"
+target_size = (299,299)
+batch_size = 256
 # trainning start and end epoch
 initial_epoch   = 0
 final_epoch     = 2
@@ -61,26 +62,26 @@ train_datagen = ImageDataGenerator(
     vertical_flip = False # vertical flip pic
     )
 val_datagen = ImageDataGenerator(
-	rescale=1./255, 
-    # 应用 ZCA 白化
+	# rescale=1./255, 
+    # ZCA whitening
     # zca_whitening=True,
     # ZCA 白化的 epsilon 值
     # zca_epsilon=1e-06,
     preprocessing_function=preprocess_input,
-    # rotation_range = 90, #随机旋转图像15度
-    # width_shift_range = 0.1, #随机改变宽度，10%
+    # rotation_range = 90, 
+    # width_shift_range = 0.1, 
     # height_shift_range = 0.1,
-    # shear_range = 0.2, #剪切强度，逆时针方向剪切
-    # zoom_range = 0.2, #随机随机缩放范围，正负20%
-    horizontal_flip = False, #随机垂直翻转
-    vertical_flip = False #因内窥镜成像图始终保持在右侧，左侧为黑底文字，故此处不做水平翻转
+    # shear_range = 0.2,
+    # zoom_range = 0.2,
+    horizontal_flip = False,
+    vertical_flip = False
     )
 
 # 调用训练及验证数据
 train_generator = train_datagen.flow_from_directory(
 								directory = train_dir,
-                                target_size = (299,299), #Inception V3 is 299
-                                batch_size = 256 , # 
+                                target_size = target_size, #Inception V3 is 299
+                                batch_size = batch_size , # 
                                 shuffle = True, # train need shuffle
                                 # save_to_dir = "aug/train", # save train pic after augmention，do NOT open this
                                 # save_prefix = "augpic",  # file main name
@@ -88,8 +89,8 @@ train_generator = train_datagen.flow_from_directory(
                                 )
 val_generator = val_datagen.flow_from_directory(
 								directory = test_dir,
-                                target_size = (299,299),
-                                batch_size = 256 , 
+                                target_size = target_size,
+                                batch_size = batch_size , 
                                 shuffle = False, # val pic need not shuffle
                                 # save_to_dir = "aug/etst/", # 保存增强后的图片
                                 # save_prefix = "augpic",  # 保存文件前缀
@@ -110,7 +111,8 @@ ft_val_steps = val_generator.n // val_generator.batch_size
 terminate_on_nan = TerminateOnNaN() # if NaN loss,stop train
 
 model_checkpoint_tl = ModelCheckpoint(
-	filepath = './ckpt/tl_weights.{epoch:02d}-{val_acc:.4f}.h5', # save snapshot path and filename
+	# filepath = './ckpt/tl_weights.{epoch:02d}-{val_acc:.4f}.h5', # save snapshot path and filename
+	filepath = './ckpt/tl_weights.{epoch:02d}-{val_accuracy:.4f}.h5', # val_acc is not support in keras 2.3.x
 	monitor = 'val_acc' , # monitor val_acc
 	verbose = 1, # details mode
 	save_best_only = True, # don't overwrite the best model
@@ -119,7 +121,8 @@ model_checkpoint_tl = ModelCheckpoint(
 	period = 1 # monitior per 1 epoch 
 	)
 model_checkpoint_ft = ModelCheckpoint(
-	filepath = './ckpt/tl_weights.{epoch:02d}-{val_acc:.4f}.h5', # save snapshot path and filename
+	# filepath = './ckpt/tl_weights.{epoch:02d}-{val_acc:.4f}.h5', # save snapshot path and filename
+	filepath = './ckpt/ft_weights.{epoch:02d}-{val_accuracy:.4f}.h5', # val_acc is not support in keras 2.3.x
 	monitor = 'val_acc' , # monitor val_acc
 	verbose = 1, # details mode
 	save_best_only = True, # don't overwrite the best model
@@ -183,6 +186,7 @@ def network_mode(mode):
 	print(mode)
 	print("====================================================")
 	global x
+	global base_model
 
 	if mode == "InceptionV3":
 		# load Keras offical model
@@ -216,10 +220,10 @@ def train(train_mode):
 		work = parallel_model
 
 	if train_mode == "single":
-		model = network_mode(network_mode)
+		model = network_mode(network_name)
 		work = model
 
-	for layer in model.layers:
+	for layer in base_model.layers:
 		layer.trainable = False
 
 	# let work = model or parallel_model
