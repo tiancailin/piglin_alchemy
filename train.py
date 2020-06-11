@@ -49,7 +49,7 @@ batch_size = 32
 # trainning start and end epoch
 initial_epoch   = 0
 final_epoch     = 20
-fit_x = (-1,299,299,3)
+# fit_x = (-1,299,299,3)
 
 # base trainning parameter end
 
